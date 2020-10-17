@@ -1,4 +1,7 @@
-# Configuration MQTT + TELEGRAF + MQTT
+# Configuration Stack Technology Stack: INFLUXDB + TELEGRAF + MQTT
+
+
+<img src="https://cms.gabrieltanner.org/content/images/2020/08/Technology-Stack.jpg"/>
 
 # In the host:
 
@@ -125,9 +128,59 @@ Here you will need to modify some fields under the `[[inputs.mqtt_consumer]]` ta
       telegraf
 ```
 
+
+# Scripts MQTT
+
+<img src="https://storage.googleapis.com/jawahar-tech/1560609620174.png"/>
+
+* Install paho.mqtt for golang:
+```
+  go get github.com/eclipse/paho.mqtt.golang
+``` 
+
+* Run:
+```
+  go run mqtt.go
+```
+<br>
+<br>
+
 # Run telegraf 
 
 ```
   docker run -d -p 3000:3000 grafana/grafana
 ```
 
+Go to http://localhost:3000
+
+<img src="https://cms.gabrieltanner.org/content/images/2020/08/grafana-login.png"/>
+
+A continuación, navegue a la página para agregar fuente de datos haciendo clic en ***Configuración*** `>` ***Fuentes de datos*** en el menú lateral.
+
+<img src="https://cms.gabrieltanner.org/content/images/2020/08/grafana-datasource.png"/>
+
+Continúe seleccionando InfluxDB en el menú desplegable de bases de datos de series de tiempo. Ahora debe configurar la fuente de datos completando la URL y los campos de la base de datos según la configuración que configuró anteriormente.
+
+La URL es una combinación de la dirección IP y el puerto de su API InfluxDB y la base de datos es el nombre de la base de datos que estableció anteriormente (Sensores si siguió el artículo).
+
+<img src="https://cms.gabrieltanner.org/content/images/2020/08/grafana-influxdb-datasource.png"/>
+
+Después de configurar y guardar correctamente la fuente de datos, puede continuar creando un nuevo panel. Siga los siguientes pasos para eso:
+
+Haga clic en Nuevo panel .
+Haga clic en Agregar nuevo panel . Grafana crea un panel gráfico básico que debe configurarse con sus datos de InfluxDB.
+
+<img src="https://cms.gabrieltanner.org/content/images/2020/08/grafana-create-dashboard.png" />
+
+Ahora es el momento de configurar su panel utilizando los datos de su base de datos InfluxDB. Aquí debe seleccionar el clima como la medida que desea utilizar para el campo desde. Luego, debe seleccionar la temperatura como campo.
+
+Para obtener más información sobre el selector de consultas, <a href="https://grafana.com/docs/grafana/latest/datasources/influxdb/">visite la documentación oficial</a>.
+
+# Escribir un punto en una serie
+
+```
+curl -i -XPOST 'http://localhost:8086/write?db=sensors' \
+  --data-binary 'weather,host=server01,region=us-west value=0.64 1434055562000000000'
+```
+
+weather,location=us temperature=23232000
